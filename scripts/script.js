@@ -78,24 +78,22 @@ new Vue({
       this.updateBar(e.pageX);
     },
     prevTrack() {
+      if (this.currentTrackIndex === 0) {
+        return;
+      }
       this.transitionName = "scale-in";
       this.isShowCover = false;
-      if (this.currentTrackIndex > 0) {
-        this.currentTrackIndex--;
-      } else {
-        this.currentTrackIndex = this.tracks.length - 1;
-      }
+      this.currentTrackIndex--;
       this.currentTrack = this.tracks[this.currentTrackIndex];
       this.resetPlayer();
     },
     nextTrack() {
+      if (this.currentTrackIndex >= this.tracks.length - 1) {
+        return;
+      }
       this.transitionName = "scale-out";
       this.isShowCover = false;
-      if (this.currentTrackIndex < this.tracks.length - 1) {
-        this.currentTrackIndex++;
-      } else {
-        this.currentTrackIndex = 0;
-      }
+      this.currentTrackIndex++;
       this.currentTrack = this.tracks[this.currentTrackIndex];
       this.resetPlayer();
     },
@@ -130,8 +128,12 @@ new Vue({
       vm.generateTime();
     };
     this.audio.onended = function() {
-      vm.nextTrack();
-      this.isTimerPlaying = true;
+      if (vm.currentTrackIndex < vm.tracks.length - 1) {
+        vm.isTimerPlaying = true;
+        vm.nextTrack();
+      } else {
+        vm.isTimerPlaying = false;
+      }
     };
 
     // this is optional (for preload covers)
